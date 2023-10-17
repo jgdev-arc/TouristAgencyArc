@@ -647,30 +647,15 @@ public class MainScreen extends JFrame {
 
     }
 
-    private void SaveCurrentReservationToNewFile(String phoneNumber, File file) {
-        TreeMap<String, Reservation> newMapToSave = new TreeMap<>();
+    private void SaveCurrentReservationToNewFile(String phoneNumber, File file) throws IOException {
+        // Memento Design Pattern Implementation
 
-        // Add customer to map
-        Reservation reservation = new Reservation(createCustomer(), getChosenServices());
-        newMapToSave.put(phoneNumber, reservation);
-
-        // Save reservation to disk
-        OutputStream os = null;
-        try {
-            os = new FileOutputStream(file);
-            ObjectOutputStream oos = new ObjectOutputStream(os);
-
-            oos.writeObject(newMapToSave);
-            oos.flush();
-            oos.close();
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
+        Originator originator = new Originator(
+                createCustomer(),
+                getChosenServices(),
+                new Caretaker()
+        );
+        originator.createReservation(phoneNumber);
     }
 
     public void SearchCustomerByMobileNumber() {
