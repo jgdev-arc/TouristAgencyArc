@@ -218,21 +218,34 @@ public class MainScreen extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 detailAccommodationArea.setText("Accommodation: 5 Star Resort \nAll Inclusive");
-                detailAccommodationArea.setText("Activities: Gorgeous \nSky Diving \nExperience");
-                detailAccommodationArea.setText("Transportation: Uber Black");
+                detailActivityArea.setText("Activities: Gorgeous Sky Diving Experience");
+                detailTransArea.setText("Transportation: Uber Black");
+
+                PackageBuilder offer1 = new Offer1();
+                offer1.createPackage();
+                totalPriceLBL.setText("Total Price: " + "$ " + offer1.getP().getTotalPrice());
+
             }
         });
 
         package2RadioBtn.addActionListener(e -> {
             detailAccommodationArea.setText("Accommodation: 5 Star Hotel \nAll Inclusive");
-            detailAccommodationArea.setText("Activities: Unforgettable \nIsland Cruise");
-            detailAccommodationArea.setText("Transportation: Deluxe Bus");
+            detailActivityArea.setText("Activities: Unforgettable Island Cruise");
+            detailTransArea.setText("Transportation: Deluxe Bus");
+
+            PackageBuilder offer2 = new Offer1();
+            offer2.createPackage();
+            totalPriceLBL.setText("Total Price: " + "$ " + offer2.getP().getTotalPrice());
         });
 
         package3RadioBtn.addActionListener(e -> {
             detailAccommodationArea.setText("Accommodation: 4 Star Hotel \nAll Inclusive");
-            detailAccommodationArea.setText("Activities: Adventure \nScooba Diving");
-            detailAccommodationArea.setText("Transportation: Deluxe Bus");
+            detailActivityArea.setText("Activities: Scooba Diving Adventure");
+            detailTransArea.setText("Transportation: Deluxe Bus");
+
+            PackageBuilder offer3 = new Offer1();
+            offer3.createPackage();
+            totalPriceLBL.setText("Total Price: " + "$ " + offer3.getP().getTotalPrice());
         });
 
         p2.add(package1RadioBtn);
@@ -693,6 +706,6 @@ public class MainScreen extends JFrame {
         mainFrame.setVisible(true);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setTitle("Tourist Agency Management System");
-        mainFrame.setBounds(0, 0, 1920, 1080);
+        mainFrame.setBounds(250, 150, 1200, 800);
     }
 }
