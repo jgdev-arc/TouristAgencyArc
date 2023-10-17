@@ -1,5 +1,6 @@
 package com.tlz;
 
+import com.sun.source.tree.Tree;
 import com.tlz.packages.Offer1;
 import com.tlz.packages.Offer2;
 import com.tlz.packages.Offer3;
@@ -11,8 +12,11 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class MainScreen extends JFrame {
 
@@ -99,10 +103,10 @@ public class MainScreen extends JFrame {
 
         p1.setBorder(titledBorder);
 
-        JLabel firstNameLBL = new JLabel("First Name");
-        JLabel lastNameLBL = new JLabel("Last Name");
-        JLabel cityLBL = new JLabel("City");
-        JLabel phoneLBL = new JLabel("Phone");
+        JLabel nameLBL = new JLabel(" Name");
+        JLabel phoneLBL = new JLabel(" Phone");
+        JLabel ageLBL = new JLabel(" Age");
+        JLabel jobLBL = new JLabel(" Job");
         JLabel isIndividualLBL = new JLabel("Individual Trip?");
 
         customerName = new JTextField();
@@ -118,13 +122,13 @@ public class MainScreen extends JFrame {
         isGroup = new JRadioButton("Group");
 
         // Adding Widgets to panel
-        p1.add(firstNameLBL);
+        p1.add(nameLBL);
         p1.add(customerName);
-        p1.add(lastNameLBL);
-        p1.add(customerPhone);
-        p1.add(cityLBL);
-        p1.add(customerAge);
         p1.add(phoneLBL);
+        p1.add(customerPhone);
+        p1.add(ageLBL);
+        p1.add(customerAge);
+        p1.add(jobLBL);
 
         // Drop down menu
         String[] jobs = {"Student", "Business", "Retired", "Employee"};
@@ -325,7 +329,7 @@ public class MainScreen extends JFrame {
 
         p4.setBorder(titledBorder4);
 
-        totalPriceLBL = new JTextArea("Total Price: ______ $");
+        totalPriceLBL = new JTextArea("Total Price: $______ ");
         totalPriceLBL.setOpaque(false);
         totalPriceLBL.setFont(myFont2);
         payment1RadioBtn = new JRadioButton("Paypal");
@@ -416,7 +420,11 @@ public class MainScreen extends JFrame {
         p6.add(makeSearch);
 
         makeReservationBtn.addActionListener(e -> {
-            MakeReservation();
+            try {
+                MakeReservation();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         });
 
 
@@ -476,11 +484,11 @@ public class MainScreen extends JFrame {
         return c;
     }
 
-    private void SearchCustomerByMobileNumber() {
-    }
-
-    private void MakeReservation() {
+    private void MakeReservation() throws IOException {
         Customer c = createCustomer();
+
+        ArrayList<Services> servicesArrayList = getChosenServices();
+        SaveReservationToDisk();
     }
 
     private ArrayList<Services> getChosenServices() {
@@ -570,11 +578,113 @@ public class MainScreen extends JFrame {
             packagePrice = (int) (packagePrice * 0.7);
         }
 
-        totalPriceLBL.setText("Total Price Before \nDiscount: " +
-                beforeDiscount + "\nTotal Price \n After Discount: \n " +
-                packagePrice + " $");
+        totalPriceLBL.setText("Total Price Before Discount: " +
+                "$" + beforeDiscount + "\nTotal Price After Discount: " +
+                "$" + packagePrice);
 
     }
+
+    public void SaveReservationToDisk() throws IOException {
+
+        File file = new File("C:\\Users\\Lord Zedd\\Desktop\\myReservationFile.dat");
+        String phoneNumber = customerPhone.getText();
+
+        if (!file.exists()) {
+            file.createNewFile();
+            SaveCurrentReservationToNewFile(phoneNumber, file);
+        } else {
+            // If file already exists
+
+            try {
+                TreeMap<String, Reservation> newMapToSave = new TreeMap<>();
+
+                // Get existing file to write new reservation
+                InputStream is = new FileInputStream(file);
+                ObjectInputStream ois = new ObjectInputStream(is);
+
+                Reservation reservation = new Reservation(createCustomer(), getChosenServices());
+
+                // Reads the saved map
+                TreeMap<String, Reservation> mapInFile = (TreeMap<String, Reservation>) ois.readObject();
+                ois.close();
+                is.close();
+
+                // Clone the mapInFile items into newMapToSave
+                for (Map.Entry<String, Reservation> m : mapInFile.entrySet()) {
+                    newMapToSave.put(m.getKey(), m.getValue());
+                }
+
+                // Add new reservation to map
+                newMapToSave.put(phoneNumber, reservation);
+
+                // Save new map to disk
+                OutputStream os = new FileOutputStream(file);
+                ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(newMapToSave);
+                oos.flush();
+                oos.close();
+
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
+    }
+
+    private void SaveCurrentReservationToNewFile(String phoneNumber, File file) {
+        TreeMap<String, Reservation> newMapToSave = new TreeMap<>();
+
+        // Add customer to map
+        Reservation reservation = new Reservation(createCustomer(), getChosenServices());
+        newMapToSave.put(phoneNumber, reservation);
+
+        // Save reservation to disk
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(file);
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+
+            oos.writeObject(newMapToSave);
+            oos.flush();
+            oos.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public void SearchCustomerByMobileNumber() {
+        File file = new File("C:\\Users\\Lord Zedd\\Desktop\\myReservationFile.dat");
+
+        try {
+            InputStream is = new FileInputStream(file);
+            ObjectInputStream ois = new ObjectInputStream(is);
+
+            TreeMap<String, Reservation> mapInFile = (TreeMap<String, Reservation>) ois.readObject();
+            ois.close();
+            is.close();
+
+            // Displays reservation details
+            Reservation reservationFound = mapInFile.get(searchField.getText());
+            reservationDetailsArea.setText(reservationFound.toString());
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
 
     public static void main (String[]args) throws ParseException {
