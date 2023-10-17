@@ -1,10 +1,9 @@
 package com.tlz;
 
-import com.sun.source.tree.Tree;
 import com.tlz.packages.Offer1;
 import com.tlz.packages.Offer2;
 import com.tlz.packages.Offer3;
-import com.tlz.packages.PackageOffer;
+import com.tlz.packages.PackageBuilder;
 import com.tlz.services.*;
 
 import javax.swing.*;
@@ -532,32 +531,34 @@ public class MainScreen extends JFrame {
             // Group Trip
 
             if (package1RadioBtn.isSelected()) {
-                PackageOffer offer1 = new Offer1();
-                DisplayTotalPrice(offer1.getTotalPrice());
+                PackageBuilder offer1 = new Offer1();
+                offer1.createPackage();
+
+                DisplayTotalPrice(offer1.getP().getTotalPrice());
 
                 // Add chosen services to arraylist
                 servicesArrayList.clear();
-                servicesArrayList.add(offer1.trans);
-                servicesArrayList.add(offer1.act);
-                servicesArrayList.add(offer1.acc);
+                servicesArrayList.add(offer1.getP().getTrans());
+                servicesArrayList.add(offer1.getP().getAct());
+                servicesArrayList.add(offer1.getP().getAcc());
             } else if (package2RadioBtn.isSelected()) {
-                PackageOffer offer2 = new Offer2();
-                DisplayTotalPrice(offer2.getTotalPrice());
+                PackageBuilder offer2 = new Offer2();
+                DisplayTotalPrice(offer2.getP().getTotalPrice());
 
                 // Add chosen services to arraylist
                 servicesArrayList.clear();
-                servicesArrayList.add(offer2.trans);
-                servicesArrayList.add(offer2.act);
-                servicesArrayList.add(offer2.acc);
+                servicesArrayList.add(offer2.getP().getTrans());
+                servicesArrayList.add(offer2.getP().getAct());
+                servicesArrayList.add(offer2.getP().getAcc());
             } else if (package3RadioBtn.isSelected()) {
-                PackageOffer offer3 = new Offer3();
-                DisplayTotalPrice(offer3.getTotalPrice());
+                PackageBuilder offer3 = new Offer3();
+                DisplayTotalPrice(offer3.getP().getTotalPrice());
 
                 // Add chosen services to arraylist
                 servicesArrayList.clear();
-                servicesArrayList.add(offer3.trans);
-                servicesArrayList.add(offer3.act);
-                servicesArrayList.add(offer3.acc);
+                servicesArrayList.add(offer3.getP().getTrans());
+                servicesArrayList.add(offer3.getP().getAct());
+                servicesArrayList.add(offer3.getP().getAcc());
             }
         }
 
