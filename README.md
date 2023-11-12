@@ -9,7 +9,7 @@
 
 # Learning Goal
 
-My main objective for this application was to become more familiar with implementing design patterns in a real project. The functionality itself is fairly simple; there is a collection of panels 
+My main objective for this application was to become more familiar with implementing **design patterns** in a real project. The functionality itself is fairly simple; there is a collection of panels 
 that take input and display data, themed around the end user being someone who works as an agent at a tourist agency. 
 
 # :camera_flash: **Features** :camera_flash:
